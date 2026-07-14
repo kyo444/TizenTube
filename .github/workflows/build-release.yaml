@@ -24,21 +24,7 @@ jobs:
       - name: Determine release tag
         id: version
         run: |
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
-          if [ -z "$TAG" ]; then
-            echo "No tags found; deriving from config.xml or fallback"
-            if [ -f standalone/config.xml ]; then
-              # Extract version from config.xml's version attribute
-              CFG_VER=$(sed -n 's/.*version="\([^"]*\)".*/\1/p' standalone/config.xml | head -n1)
-              if [ -n "$CFG_VER" ]; then
-                TAG=v$CFG_VER
-              else
-                TAG=v0.0.0-${GITHUB_SHA:0:7}
-              fi
-            else
-              TAG=v0.0.0-${GITHUB_SHA:0:7}
-            fi
-          fi
+          TAG=${GITHUB_REF_NAME}
           echo "RELEASE_VERSION=$TAG" >> $GITHUB_ENV
 
       - name: Install modules, transpile service and build service
